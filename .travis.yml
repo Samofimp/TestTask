@@ -1,0 +1,27 @@
+language: bash
+
+services:
+  - docker
+
+before_install:
+  - echo "Preparing to build the image..."
+
+install:
+  - echo "We are almost prepared for build"
+
+before_script:
+  - echo "We are prepared for sure"
+
+script:
+  - echo "Building the image..."
+  # Переменные DOCKERHUB_PASSWORD и DOCKERHUB_USERNAME заданы в настройках проекта в Travis CI
+  - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+  - docker build -t redmine Part2
+
+after_success:
+  - echo "Deploying the image..."
+  - docker tag redmine samofimp/redmine
+  - docker push samofimp/redmine
+
+after_script:
+  - echo "Deployment has been finished"
