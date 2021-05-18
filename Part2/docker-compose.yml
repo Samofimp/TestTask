@@ -1,0 +1,29 @@
+# Указание версии спецификации
+version: '3.9'
+
+# Описание контейнеров, которые нужно развернуть
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      # Настройка БД для работы с Redmine
+      POSTGRES_DB: redmine
+      POSTGRES_USER: redmine
+      POSTGRES_PASSWORD: my_password
+  redmine:
+    build: .
+    ports:
+      - 8080:8080
+    # Необходимо дождаться старта контейнера с БД
+    depends_on: 
+      - postgres
+    restart: always
+  nginx:
+    image: nginx
+    ports:
+      - 8081:80
+    volumes:
+      # Загрузка HTML-файла в контейнер
+      - ./index.html:/usr/share/nginx/html/index.html
